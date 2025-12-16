@@ -6,11 +6,11 @@ settings:
 
 dependencies:
   '@instantdb/admin':
-    specifier: latest
-    version: 0.22.90
+    specifier: 0.22.89-experimental.drewh-ssr.20280366757.1
+    version: 0.22.89-experimental.drewh-ssr.20280366757.1
   '@instantdb/react':
-    specifier: latest
-    version: 0.22.90(react@19.1.0)
+    specifier: 0.22.89-experimental.drewh-ssr.20280366757.1
+    version: 0.22.89-experimental.drewh-ssr.20280366757.1(react@19.1.0)
   next:
     specifier: 15.4.8
     version: 15.4.8(react-dom@19.1.0)(react@19.1.0)
@@ -290,46 +290,46 @@ packages:
     dev: false
     optional: true
 
-  /@instantdb/admin@0.22.90:
-    resolution: {integrity: sha512-Fspe4RAdQ+1zboTeuSHL+K9UsF1MRukOGHFs7nscgeu3Qm+Yau4Zs0FTVftAN0NYcKBlmSb2bOA9dLD3TDI7Eg==}
+  /@instantdb/admin@0.22.89-experimental.drewh-ssr.20280366757.1:
+    resolution: {integrity: sha512-sC+pGLiSXvAs0fhwwpEtb1KjUsOe3ORh3qiY9LPBj/SU6D6YuI98hvGMxXmcv2M7Enc9RYaApYMtmgEsNC233w==}
     dependencies:
-      '@instantdb/core': 0.22.90
-      '@instantdb/version': 0.22.90
+      '@instantdb/core': 0.22.89-experimental.drewh-ssr.20280366757.1
+      '@instantdb/version': 0.22.89-experimental.drewh-ssr.20280366757.1
       eventsource: 4.1.0
     dev: false
 
-  /@instantdb/core@0.22.90:
-    resolution: {integrity: sha512-R3DKMPtjz1X4lp2ipNFvCKsBsb1UaOCIqkgkJsROvHopRSlAMOFlNNO4rdn7VfKaJvmZLn1u0Yd/6kq08Zy38g==}
+  /@instantdb/core@0.22.89-experimental.drewh-ssr.20280366757.1:
+    resolution: {integrity: sha512-v/3MhwL1Ba0vSgc95LE/IdushTaGiMzRePxB//fi70+TDC7z2i8jXHdM1/6VoCuM95hBAiPtQP55CGapjJbT1A==}
     dependencies:
-      '@instantdb/version': 0.22.90
+      '@instantdb/version': 0.22.89-experimental.drewh-ssr.20280366757.1
       mutative: 1.3.0
       uuid: 11.1.0
     dev: false
 
-  /@instantdb/react-common@0.22.90(react@19.1.0):
-    resolution: {integrity: sha512-br6eAB646V6HZak2ha0WUMWcevasekXSNdC2FqkEws/kljmIRL5LPN2Bc3NLjYgDtCEhSXi9kvW/FGLs7GEiYw==}
+  /@instantdb/react-common@0.22.89-experimental.drewh-ssr.20280366757.1(react@19.1.0):
+    resolution: {integrity: sha512-bSaB+WdAwnPoxDNgyvo7/Ntua8aNwt3CLE1zPfl9kVz0deW5ZvlDGmQiqHqyBnjP+V9mpCp3dmoG3bCs+skY7A==}
     peerDependencies:
       react: '>=16'
     dependencies:
-      '@instantdb/core': 0.22.90
-      '@instantdb/version': 0.22.90
+      '@instantdb/core': 0.22.89-experimental.drewh-ssr.20280366757.1
+      '@instantdb/version': 0.22.89-experimental.drewh-ssr.20280366757.1
       react: 19.1.0
     dev: false
 
-  /@instantdb/react@0.22.90(react@19.1.0):
-    resolution: {integrity: sha512-+vnk0a07RfhWZ0/6RVHrvHlJ8SVhdOwREqc1ElNNl+GyfhJg1Ur6Jwz3YMF0HVbL858WWiX49AnqhRYLmso5eQ==}
+  /@instantdb/react@0.22.89-experimental.drewh-ssr.20280366757.1(react@19.1.0):
+    resolution: {integrity: sha512-4gh6Qdw3Mt5C/2E+MEaUVNhmYHUKcmKXNZsHBGVwmOk43YpV1i/kRBBacEYyuDrjDRgnjcQP9oJKEOIWiKTXTA==}
     peerDependencies:
       react: '>=16'
     dependencies:
-      '@instantdb/core': 0.22.90
-      '@instantdb/react-common': 0.22.90(react@19.1.0)
-      '@instantdb/version': 0.22.90
+      '@instantdb/core': 0.22.89-experimental.drewh-ssr.20280366757.1
+      '@instantdb/react-common': 0.22.89-experimental.drewh-ssr.20280366757.1(react@19.1.0)
+      '@instantdb/version': 0.22.89-experimental.drewh-ssr.20280366757.1
       eventsource: 4.1.0
       react: 19.1.0
     dev: false
 
-  /@instantdb/version@0.22.90:
-    resolution: {integrity: sha512-iDiaDDE40hGdLno+unc/HvAVPY3lnqAxjItj0oxGNtTeJfa9sev6UET9v5wqComMevze8dGi0gDCRsHgXMzxoQ==}
+  /@instantdb/version@0.22.89-experimental.drewh-ssr.20280366757.1:
+    resolution: {integrity: sha512-wEcXvxw76GhSr97rl3EPjU01jY807tfFHL1mRYKSrAXy4MHu/kfO8RndPnMFrtlDdmowk4BwNH4LPB77kH5tCQ==}
     dev: false
 
   /@jridgewell/gen-mapping@0.3.13:

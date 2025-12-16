@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@instantdb/react": "latest",
-    "@instantdb/admin": "latest",
+    "@instantdb/react": "0.22.89-experimental.drewh-ssr.20280366757.1",
+    "@instantdb/admin": "0.22.89-experimental.drewh-ssr.20280366757.1",
     "next": "15.4.8",
     "react": "19.1.0",
     "react-dom": "19.1.0"

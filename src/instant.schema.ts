@@ -13,10 +13,10 @@ const _schema = i.schema({
       imageURL: i.string().optional(),
       type: i.string().optional(),
     }),
-    todos: i.entity({
-      text: i.string(),
-      done: i.boolean(),
-      createdAt: i.number(),
+    posts: i.entity({
+      title: i.string(),
+      content: i.string(),
+      createdAt: i.date().indexed(),
     }),
   },
   links: {
@@ -33,12 +33,20 @@ const _schema = i.schema({
         label: "linkedGuestUsers",
       },
     },
-  },
-  rooms: {
-    todos: {
-      presence: i.entity({}),
+    postsAuthor: {
+      forward: {
+        on: "posts",
+        has: "one",
+        label: "author",
+      },
+      reverse: {
+        on: "$users",
+        has: "many",
+        label: "posts",
+      },
     },
   },
+  rooms: {},
 });
 
 // This helps Typescript display nicer intellisense

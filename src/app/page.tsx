@@ -1,169 +1,225 @@
 "use client";
 
+import { useState } from "react";
 import { db } from "@/lib/db";
-import { type AppSchema } from "@/instant.schema";
 import { id, InstaQLEntity } from "@instantdb/react";
+import type { AppSchema } from "@/instant.schema";
 
-type Todo = InstaQLEntity<AppSchema, "todos">;
+// InstaQLEntity with Date objects (since we use useDateObjects: true)
+type Post = Omit<InstaQLEntity<AppSchema, "posts", { author: {} }>, "createdAt"> & {
+  createdAt: Date;
+};
+// type Post = InstaQLEntity<AppSchema, "posts", { author: {} }>
 
-const room = db.room("todos");
 
-function App() {
-  // Read Data
-  const { isLoading, error, data } = db.useQuery({ todos: {} });
-  const { peers } = db.rooms.usePresence(room);
-  const numUsers = 1 + Object.keys(peers).length;
-  if (isLoading) {
-    return;
-  }
-  if (error) {
-    return <div className="text-red-500 p-4">Error: {error.message}</div>;
-  }
-  const { todos } = data;
+export default function App() {
+  const { data } = db.useSuspenseQuery({
+    posts: {
+      $: { order: { createdAt: "desc" } },
+      author: {},
+    },
+  });
+
+  const { posts } = data;
+
   return (
-    <div className="font-mono min-h-screen flex justify-center items-center flex-col space-y-4">
-      <div className="text-xs text-gray-500">
-        Number of users online: {numUsers}
-      </div>
-      <h2 className="tracking-wide text-5xl text-gray-300">todos</h2>
-      <div className="border border-gray-300 max-w-xs w-full">
-        <TodoForm todos={todos} />
-        <TodoList todos={todos} />
-        <ActionBar todos={todos} />
-      </div>
-      <div className="text-xs text-center">
-        Open another tab to see todos update in realtime!
-      </div>
+    <div className="min-h-screen p-8 max-w-2xl mx-auto font-sans">
+      <header className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Microblog</h1>
+        <AuthSection />
+      </header>
+
+      <main className="space-y-6">
+        <CreatePost />
+        <PostList posts={posts} />
+      </main>
+
+      <footer className="mt-12 text-center text-xs text-gray-400">
+        Posts are rendered via SSR. View page source to verify!
+      </footer>
     </div>
   );
 }
 
-// Write Data
-// ---------
-function addTodo(text: string) {
-  db.transact(
-    db.tx.todos[id()].update({
-      text,
-      done: false,
-      createdAt: Date.now(),
-    }),
-  );
-}
+function PostList({ posts }: { posts: Post[] }) {
+  if (posts.length === 0) {
+    return (
+      <p className="text-gray-500 text-center py-8">
+        No posts yet. Be the first to write something!
+      </p>
+    );
+  }
 
-function deleteTodo(todo: Todo) {
-  db.transact(db.tx.todos[todo.id].delete());
-}
-
-function toggleDone(todo: Todo) {
-  db.transact(db.tx.todos[todo.id].update({ done: !todo.done }));
-}
-
-function deleteCompleted(todos: Todo[]) {
-  const completed = todos.filter((todo) => todo.done);
-  const txs = completed.map((todo) => db.tx.todos[todo.id].delete());
-  db.transact(txs);
-}
-
-function toggleAll(todos: Todo[]) {
-  const newVal = !todos.every((todo) => todo.done);
-  db.transact(
-    todos.map((todo) => db.tx.todos[todo.id].update({ done: newVal })),
-  );
-}
-
-// Components
-// ----------
-function ChevronDownIcon() {
   return (
-    <svg viewBox="0 0 20 20">
-      <path
-        d="M5 8 L10 13 L15 8"
-        stroke="currentColor"
-        fill="none"
-        strokeWidth="2"
-      />
-    </svg>
-  );
-}
-
-function TodoForm({ todos }: { todos: Todo[] }) {
-  return (
-    <div className="flex items-center h-10 border-b border-gray-300">
-      <button
-        className="h-full px-2 border-r border-gray-300 flex items-center justify-center"
-        onClick={() => toggleAll(todos)}
-      >
-        <div className="w-5 h-5">
-          <ChevronDownIcon />
-        </div>
-      </button>
-      <form
-        className="flex-1 h-full"
-        onSubmit={(e) => {
-          e.preventDefault();
-          const input = e.currentTarget.input as HTMLInputElement;
-          addTodo(input.value);
-          input.value = "";
-        }}
-      >
-        <input
-          className="w-full h-full px-2 outline-none bg-transparent"
-          autoFocus
-          placeholder="What needs to be done?"
-          type="text"
-          name="input"
-        />
-      </form>
-    </div>
-  );
-}
-
-function TodoList({ todos }: { todos: Todo[] }) {
-  return (
-    <div className="divide-y divide-gray-300">
-      {todos.map((todo) => (
-        <div key={todo.id} className="flex items-center h-10">
-          <div className="h-full px-2 flex items-center justify-center">
-            <div className="w-5 h-5 flex items-center justify-center">
-              <input
-                type="checkbox"
-                className="cursor-pointer"
-                checked={todo.done}
-                onChange={() => toggleDone(todo)}
-              />
-            </div>
-          </div>
-          <div className="flex-1 px-2 overflow-hidden flex items-center">
-            {todo.done ? (
-              <span className="line-through">{todo.text}</span>
-            ) : (
-              <span>{todo.text}</span>
-            )}
-          </div>
-          <button
-            className="h-full px-2 flex items-center justify-center text-gray-300 hover:text-gray-500"
-            onClick={() => deleteTodo(todo)}
-          >
-            X
-          </button>
-        </div>
+    <div className="space-y-4">
+      {posts.map((post) => (
+        <PostCard key={post.id} post={post} />
       ))}
     </div>
   );
 }
 
-function ActionBar({ todos }: { todos: Todo[] }) {
+function PostCard({ post }: { post: Post }) {
+  const deletePost = () => {
+    db.transact(db.tx.posts[post.id].delete());
+  };
+
   return (
-    <div className="flex justify-between items-center h-10 px-2 text-xs border-t border-gray-300">
-      <div>Remaining todos: {todos.filter((todo) => !todo.done).length}</div>
-      <button
-        className=" text-gray-300 hover:text-gray-500"
-        onClick={() => deleteCompleted(todos)}
-      >
-        Delete Completed
-      </button>
-    </div>
+    <article className="border border-gray-200 rounded p-4">
+      <div className="flex justify-between items-start">
+        <h2 className="font-semibold text-lg">{post.title}</h2>
+        <button
+          onClick={deletePost}
+          className="text-gray-400 hover:text-red-500 text-sm"
+        >
+          Delete
+        </button>
+      </div>
+      <p className="text-gray-700 mt-2 whitespace-pre-wrap">{post.content}</p>
+      <div className="text-xs text-gray-400 mt-3">
+        {post.author?.email && <span>By {post.author.email} · </span>}
+        {post.createdAt.toLocaleString()}
+      </div>
+    </article>
   );
 }
 
-export default App;
+function CreatePost() {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const { user } = db.useAuth();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || !content.trim()) return;
+
+    const postId = id();
+    const tx = db.tx.posts[postId].update({
+      title: title.trim(),
+      content: content.trim(),
+      createdAt: new Date(),
+    });
+
+    if (user) {
+      db.transact([tx, db.tx.posts[postId].link({ author: user.id })]);
+    } else {
+      db.transact(tx);
+    }
+
+    setTitle("");
+    setContent("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="border border-gray-200 rounded p-4">
+      <input
+        type="text"
+        placeholder="Post title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        className="w-full border border-gray-300 rounded px-3 py-2 mb-2"
+      />
+      <textarea
+        placeholder="What's on your mind?"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        rows={3}
+        className="w-full border border-gray-300 rounded px-3 py-2 mb-2 resize-none"
+      />
+      <button
+        type="submit"
+        disabled={!title.trim() || !content.trim()}
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+      >
+        Post
+      </button>
+    </form>
+  );
+}
+
+function AuthSection() {
+  const { isLoading, user, error } = db.useAuth();
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [sentTo, setSentTo] = useState("");
+
+  if (isLoading) {
+    return <div className="text-gray-500">Loading auth...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">Auth error: {error.message}</div>;
+  }
+
+  if (user) {
+    return (
+      <div className="flex items-center gap-4">
+        <span className="text-sm text-gray-600">{user.email}</span>
+        <button
+          onClick={() => db.auth.signOut()}
+          className="text-sm text-blue-500 hover:underline"
+        >
+          Sign out
+        </button>
+      </div>
+    );
+  }
+
+  const handleSendCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    await db.auth.sendMagicCode({ email: email.trim() });
+    setSentTo(email.trim());
+  };
+
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!code.trim()) return;
+    await db.auth.signInWithMagicCode({ email: sentTo, code: code.trim() });
+  };
+
+  if (sentTo) {
+    return (
+      <form onSubmit={handleVerifyCode} className="flex gap-2">
+        <input
+          type="text"
+          placeholder="Enter code"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          className="border border-gray-300 rounded px-2 py-1 text-sm w-32"
+        />
+        <button
+          type="submit"
+          className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+        >
+          Verify
+        </button>
+        <button
+          type="button"
+          onClick={() => setSentTo("")}
+          className="text-sm text-gray-500 hover:underline"
+        >
+          Cancel
+        </button>
+      </form>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSendCode} className="flex gap-2">
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="border border-gray-300 rounded px-2 py-1 text-sm w-48"
+      />
+      <button
+        type="submit"
+        className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+      >
+        Sign in
+      </button>
+    </form>
+  );
+}
