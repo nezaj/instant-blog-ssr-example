@@ -2,6 +2,8 @@
 
 A simple microblog demonstrating server-side rendering (SSR) with [InstantDB](https://instantdb.com) and Next.js.
 
+![Demo](./preview.png)
+
 ## Getting Started
 
 Instructions for running this project after cloning.
