@@ -5,12 +5,7 @@ import { db } from "@/lib/db";
 import { id, InstaQLEntity } from "@instantdb/react";
 import type { AppSchema } from "@/instant.schema";
 
-// InstaQLEntity with Date objects (since we use useDateObjects: true)
-type Post = Omit<InstaQLEntity<AppSchema, "posts", { author: {} }>, "createdAt"> & {
-  createdAt: Date;
-};
-// type Post = InstaQLEntity<AppSchema, "posts", { author: {} }>
-
+type Post = InstaQLEntity<AppSchema, "posts", { author: {} }, undefined, true>
 
 export default function App() {
   const { data } = db.useSuspenseQuery({
