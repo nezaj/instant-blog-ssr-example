@@ -137,10 +137,8 @@ export default function Page() {
 
 ### Key Points
 
-- **db.ts must NOT have `"use client"`** - allows import on both server and client
 - **No `<Suspense>` wrapper needed** - the provider handles it internally
 - **Cookie sync** - the route handler + `cookieEndpoint` config syncs auth state to cookies so the server can read it
-
 
 ## Questions?
 
