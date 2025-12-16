@@ -135,11 +135,6 @@ export default function Page() {
 }
 ```
 
-### Key Points
-
-- **No `<Suspense>` wrapper needed** - the provider handles it internally
-- **Cookie sync** - the route handler + `cookieEndpoint` config syncs auth state to cookies so the server can read it
-
 ## Questions?
 
 Got any feedback or questions? Join our [Discord](https://discord.gg/hgVf9R6SBm)
