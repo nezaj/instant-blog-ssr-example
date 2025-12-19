@@ -79,7 +79,7 @@ export const { POST } = createInstantRouteHandler({
 
 ### 2. Update db.ts to use the nextjs export
 ```ts
-// src/lib/db.ts (NO "use client" directive)
+// src/lib/db.ts
 import { init } from "@instantdb/react/nextjs";
 import schema from "../instant.schema";
 
