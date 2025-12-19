@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { cookies } from "next/headers";
+import { getUserOnServer } from "@instantdb/react/nextjs";
 import { InstantProvider } from "@/InstantProvider";
 import "./globals.css";
 
@@ -24,9 +24,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const userJSON = cookieStore.get("instant_user");
-  const user = userJSON ? JSON.parse(userJSON.value) : null;
+  const user = await getUserOnServer(process.env.NEXT_PUBLIC_INSTANT_APP_ID!);
 
   return (
     <html lang="en">

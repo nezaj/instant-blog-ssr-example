@@ -9,7 +9,7 @@ export const db = init({
   apiURI: "http://localhost:8888",
   websocketURI: "ws://localhost:8888/runtime/session",
 
-  cookieEndpoint: "/api/instant",
+  firstPartyPath: "/api/instant",
   schema,
   useDateObjects: true,
 });

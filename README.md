@@ -69,10 +69,10 @@ If SSR is working, you'll still see the content (not a loading state).
 
 ### 1. Create the route handler for cookie sync
 ```ts
-// src/app/api/instant/[...all]/route.ts
-import { createInstantRouteHandler } from "@instantdb/react";
+// src/app/api/instant/route.ts
+import { createInstantRouteHandler } from "@instantdb/react/nextjs";
 
-export const { GET, POST } = createInstantRouteHandler({
+export const { POST } = createInstantRouteHandler({
   appId: process.env.NEXT_PUBLIC_INSTANT_APP_ID!,
 });
 ```
@@ -85,8 +85,8 @@ import schema from "../instant.schema";
 
 export const db = init({
   appId: process.env.NEXT_PUBLIC_INSTANT_APP_ID!,
-  cookieEndpoint: "/api/instant",
   schema,
+  firstPartyPath: "/api/instant",
 });
 ```
 
@@ -107,13 +107,11 @@ export const InstantProvider = ({ children, user }) => (
 ### 4. Update layout to read cookie and wrap with provider
 ```tsx
 // src/app/layout.tsx
-import { cookies } from "next/headers";
+import { getUserOnServer } from "@instantdb/react/nextjs";
 import { InstantProvider } from "@/InstantProvider";
 
 export default async function RootLayout({ children }) {
-  const cookieStore = await cookies();
-  const userJSON = cookieStore.get("instant_user");
-  const user = userJSON ? JSON.parse(userJSON.value) : null;
+  const user = await getUserOnServer(process.env.NEXT_PUBLIC_INSTANT_APP_ID!);
 
   return (
     <html><body>
